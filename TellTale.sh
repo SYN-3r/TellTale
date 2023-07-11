@@ -53,19 +53,21 @@ loggedon=$( w | awk -F" " '{ print $1,$4 }')
 echo "Users Currently on the machine:\n $loggedon"
 
 #View which user you are
-user=$whoami
+user=$(whoami)
 echo "You are currently: $user"
 
 #MENU display start
 while true; 
 do
         printf """
-        ${Blue}What would you like to do?
+                 ${Blue}MAIN MENU
+        What would you like to do?
         __________________________
         
         ${Magenta}1. Find Users
-        ${Magenta}2. See what $user can do
-        ${Magenta}3. See Accesses
+        2. See what ${user} can do
+        3. View Files
+        4. See Accesses
         ${Red}Q. Quit${Normal}
         
         """
@@ -81,11 +83,7 @@ do
                 else
                         echo "You are not root. Searching for sudo users now..."
         
-                        #search for sudo users
-                        Sudo1=$(awk -F: '($3 == "0") {print}' /etc/passwd 2>/dev/null
-                        Sudo2=$(grep -v -E "^#" /etc/passwd 2>/dev/null | awk -F: '$3 == 0 {print $1}' 2>/dev/null)
-
-                        #print any sudo users found
+                        #search for sudo users and print any sudo users found
                         echo "Sudo Users:"
                         for user in $(cut -d: -f1 /etc/passwd); 
                         do [ $(id -u $user) = 0 ] && echo $user; 
@@ -118,15 +116,28 @@ do
                 #check to see what all the user can run with sudo
                 if [ sudo -l 2>/dev/null 1>/dev/null ];
                 then
-                        echo -en "Commands $whoami can run with sudo"\n"
+                        echo -en "Commands $whoami can run with sudo\n"
                         sudo -l 2>/dev/null
                 else
                         echo -en "Not able to view which sudo commands can be run\n"
+                fi
 
-                
-                
-        #See Accesses
+
         elif [ $selection == "3" ];
+                then
+                        declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow")
+                        for i in ${!dirs[@]};
+                        do
+                                if [ $test -r ${dirs[$i]} ];
+                                then
+                                        echo -en "${dirs[$i]}: YES\n"
+                                else
+                                        echo -en "${dirs[$i]}: NO\n"
+                                fi
+                        done
+                        
+        #See Accesses
+        elif [ $selection == "4" ];
                 #See if root is able to log in using SSH
                 if [ grep -E "^[[:space:]]*PermitRootLogin " /etc/ssh/sshd_config | grep -E "(yes|without-password|prohibit-password)" 2>/dev/null 1>/dev/null ];
                 then
@@ -153,24 +164,3 @@ done
 #                            TESTING
 #_________________________________________________________________
 
-'''
-C=$(printf '\033')
-Magenta="${C}[1;95m"
-LGray="${C}[1;37m"
-DGray="${C}[1;90m"
-Blue="${C}[1;34m"
-Cyan="${C}[1;96m"
-Red="${C}[1;31m"
-Normal="${C}[0m"
-
-printf """
-        ${Blue}What would you like to do?
-        __________________________
-        
-        ${Magenta}1. Find Users
-        ${Magenta}2. See what $user can do
-        ${Magenta}3. See Accesses
-        ${Red}0. Quit${Normal}
-        
-        """
-'''
