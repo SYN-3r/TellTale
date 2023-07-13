@@ -3,14 +3,15 @@
 #TellTale Linux Enumeration Script
 
 #Colors
-C=$(printf '\033')
-Magenta="${C}[1;95m"
-LGray="${C}[1;37m"
-DGray="${C}[1;90m"
-Blue="${C}[1;34m"
-Cyan="${C}[1;96m"
-Red="${C}[1;31m"
-Normal="${C}[0m"
+Color=$(printf '\033')
+Magenta="${Color}[1;95m"
+LGray="${Color}[1;37m"
+DGray="${Color}[1;90m"
+Blue="${Color}[1;34m"
+Cyan="${Color}[1;96m"
+Red="${Color}[1;31m"
+Normal="${Color}[0m"
+Green="${Color}[1;32m"
 
 
 printf """
@@ -68,19 +69,29 @@ printf """
   What would you like to do?
   __________________________
         
-  ${Magenta}1. Find Users
-  2. See what ${user} can do
-  3. See what root can do
-  4. View contents of /etc files
-  5. View cron abilities
-  6. See Accesses
+  ${Magenta}1. Get System Information
+  2. Find Users
+  3. See what ${user} can do
+  4. See what root can do
+  5. View contents of /etc files
+  6. View cron abilities
   ${Red}Q. Quit${Normal}
         
 """
         read -r selection
-
-        #Find Users
-        if [ $selection == "1" ];
+#Find Users
+          if [ $selection == "1" ];
+          then
+          echo -en "Current Path: $PATH \n"
+                    if [ sestatus 2>/dev/null ];
+                    then
+                              printf """
+  SELinux present? ${Green}YES${Normal} """
+                    else
+                              printf """
+  SELinux present? ${Red}NO${Normal} """
+   
+        if [ $selection == "2" ];
         then
                 #check to see if root already
                 if ([ -f /usr/bin/id ] && [ "$(/usr/bin/id -u)" -eq "0" ]) || [ "`whoami 2>/dev/null`" = "root" ];
@@ -110,7 +121,7 @@ printf """
                 fi
                 
         #See what user can do
-        elif [ $selection == "2" ]; 
+        elif [ $selection == "3" ]; 
                  #check if sudo can be used as the current user without a password
                 if [ 'echo "" | sudo -nS id"' && lse_sudo=true 2>/dev/null 1>/dev/null];
                 then 
@@ -133,16 +144,20 @@ printf """
                 then
                         declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow" "/etc/shells")
                         declare -a gooddirs=()
+                        echo -en "Are the contents of the following /etc files currently accessible? \n"
                         for i in ${!dirs[@]};
                         do
                                 if [ $test -r ${dirs[$i]} ];
                                 then
-                                        echo -en "${dirs[$i]}: YES\n"
+                                        printf """
+  ${dirs[$i]}: ${Green}YES${Normal}  """
                                         gooddirs+=("${dirs[$i]}")
                                 else
-                                        echo -en "${dirs[$i]}: NO\n"
+                                          printf """
+  ${dirs[$i]}: ${Red}NO${Normal}  """
                                 fi
                         done
+                        echo -en "\n"
                         while true;
                         do
                                 echo -en "Would you like to view contents?\n"
@@ -152,14 +167,14 @@ printf """
                                 while true;
                                 do
                                         printf """
-${Blue}Which would you like to display?
-${Magenta}1. /etc/group
-2. /etc/passwd
-3. /etc/hosts
-4. /etc/shadow
-5. /etc/shells
-6. All
-${Red}Q. Quit${Normal}
+  ${Blue}Which would you like to display?
+  ${Magenta}1. /etc/group
+  2. /etc/passwd
+  3. /etc/hosts
+  4. /etc/shadow
+  5. /etc/shells
+  6. All
+  ${Red}Q. Quit${Normal}
                                         """
                                         read -r this
                                         if [ $this == "1" ];
@@ -209,7 +224,7 @@ ${Red}Q. Quit${Normal}
                          
                         
         #See Accesses
-        elif [ $selection == "6" ];
+        elif [ $selection == "5" ];
         then       
                 
         #Quit   
