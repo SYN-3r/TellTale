@@ -251,6 +251,8 @@ printf """
   
                     declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow" "/etc/shells")
                     declare -a gooddirs=()
+                    c=1
+                    count="$c."
                     echo -en "Are the contents of the following /etc files currently accessible? \n"
                     for i in ${!dirs[@]};
                     do
@@ -267,44 +269,53 @@ printf """
                     echo -en "\n"
                     while true;
                     do
-                              echo -en "Would you like to view contents?\n"
+                              c=1
+                              count="$c."
+                              printf """
+  ${Blue}Would you like to view contents? ${Normal}\n """
                               read -r options
                               if [ $options == "Y" ] || [ $options == "y" ];
                               then
                               while true;
                               do
                                         printf """
-  ${Blue}Which would you like to display?
-  ${Magenta}1. /etc/group
-  2. /etc/passwd
-  3. /etc/hosts
-  4. /etc/shadow
-  5. /etc/shells
-  6. All
-  ${Red}Q. Quit${Normal}
-                                        """
+  ${Blue}Which would you like to display? """
+                                        for p in ${!gooddirs[@]};
+                                        do
+                                                  printf """
+  ${Magenta}$count ${gooddirs[$p]} """
+                                                  c=$((c + 1))
+                                                  count="$c."
+                                        done
+                                        printf """
+  ${Magenta}A. All
+  ${Red}Q. Quit${Normal} \n """
                                         read -r this
                                         if [ $this == "1" ];
                                         then
-                                                cat /etc/group
+                                                cat ${gooddirs[0]} 2>/dev/null
                                                 break
                                         elif [ $this == "2" ];
                                         then
-                                                cat /etc/passwd
+                                                cat ${gooddirs[1]} 2>/dev/null
                                                 break
                                         elif [ $this == "3" ];
                                         then
-                                                cat /etc/hosts
+                                                cat ${gooddirs[2]} 2>/dev/null
                                                 break
                                         elif [ $this == "4" ];
                                         then
-                                                cat /etc/shadow
+                                                cat ${gooddirs[3]} 2>/dev/null
                                                 break
                                         elif [ $this == "5" ];
                                         then
-                                                cat /etc/shells
+                                                cat ${gooddirs[4]} 2>/dev/null
                                                 break
                                         elif [ $this == "6" ];
+                                        then
+                                                cat ${gooddirs[5]} 2>/dev/null
+                                                break
+                                        elif [ $this == "A" ] | [ $this == "a" ];
                                         then
                                                 echo -en "Displaying all contents now...\n\n\n"
                                                 for a in ${!gooddirs[@]};
@@ -322,10 +333,12 @@ printf """
                                 done
                                 elif [ $options == "N" ] || [ $options == "n" ];
                                 then
-                                        echo "Will not display contents"
+                                        printf """ 
+  ${Blue}Will not display contents \n ${Normal} """
                                         break
                                 else
-                                        echo "Please enter a valid option"
+                                        printf """
+ ${Red}Pleas eneter a valid option ${Normal} \n """
                                 fi
                         done
                          
