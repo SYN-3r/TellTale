@@ -53,7 +53,7 @@ ${LGray}/-----------------------------------------------------------------------
 """
 
 #####################################################
-#             MAIN START UP / MENU
+#                   MAIN START UP
 #####################################################
 
 #View which user you are
@@ -62,6 +62,34 @@ printf """
 \n 
 ${Magenta} You are currently: ${Red} $user ${Normal} \n\n\n
 """
+printf """
+${Blue}Your permissions: \n${Normal}"""
+  
+#check if sudo can be used as the current user without a password
+if [ 'echo "" | sudo -nS id"' && lse_sudo=true 2>/dev/null 1>/dev/null];
+then 
+          printf """
+${Magenta}Password not needed to run sudo with this user ${Normal} \n """
+else
+          printf """
+${Magenta}You must have a password to run sudo with current user ${Normal} \n """
+fi
+                    
+#check to see what all the user can run with sudo
+if [ sudo -l 2>/dev/null 1>/dev/null ];
+then
+          printf """
+${Magenta}Commands $whoami can run with sudo: \n """
+          sudo -l 2>/dev/null
+else
+          printf """
+${Magenta}Not able to view which sudo commands can be run ${Normal}\n"
+
+fi
+
+#####################################################
+#                       MENU
+#####################################################
 
 #MENU display start
 while true; 
@@ -73,13 +101,14 @@ printf """
         
   ${Magenta}1. Get System and Security Information
   2. Find Users
-  3. See what ${user} can do
-  4. Find Files
-  5. View cron
+  3. Find Files
+  4. View Cron Jobs
+  5. Find Passwords
+  6. View Network
   ${Red}Q. Quit${Normal}
         
 """
-          read -r selection
+read -r selection
           
 #####################################################
 #                    SELECTION 1
@@ -211,53 +240,28 @@ printf """
                               echo "No other users found, might need sudo privs to view"
                     fi
 
+
 #####################################################
 #                    SELECTION 3
-#            SEE WHAT CURRENT USER CAN DO
-#####################################################
-
-          elif [ $selection == "3" ]; 
-          then
-                    printf """
-  ${Blue}SEE WHAT CURRENT USER CAN DO \n\n\n${Normal}"""
-  
-                    #check if sudo can be used as the current user without a password
-                    if [ 'echo "" | sudo -nS id"' && lse_sudo=true 2>/dev/null 1>/dev/null];
-                    then 
-                              echo -en "Password not needed to run sudo with this user\n"
-                    else
-                              echo -en "You must have a password to run sudo with current user\n"
-                    fi
-                    
-                    #check to see what all the user can run with sudo
-                    if [ sudo -l 2>/dev/null 1>/dev/null ];
-                    then
-                              echo -en "Commands $whoami can run with sudo\n"
-                              sudo -l 2>/dev/null
-                    else
-                              echo -en "Not able to view which sudo commands can be run\n"
-                    fi
-                    
-#####################################################
-#                    SELECTION 4
 #                     FIND FILES
 #####################################################
 
-          elif [ $selection == "4" ];
+          elif [ $selection == "3" ];
           then
                     printf """
   ${Blue}FIND FILES \n\n\n ${Normal}"""
                     while true;
-                    do
+                    do 
                               printf """
-  ${Blue}What files would you like to find? \n
+  ${Blue} Which file type would you like to find?
   ${Magenta}1. /etc files
-  2. All text files
-  3. All pdfs
-  4. All images${Normal}
-                              """
-                              read -r files
-                              
+  2. All files with SUID bit set
+  3. All text files
+  4. All pdf files
+  5. All image files
+  ${Red} Q. Quit ${Normal} \n """
+  read -r files
+  
                               if [ $files == "1" ];
                               then
   
@@ -265,7 +269,8 @@ printf """
                                         declare -a gooddirs=()
                                         c=1
                                         count="$c."
-                                        echo -en "Are the contents of the following /etc files currently accessible? \n"
+                                        printf """ 
+  ${Blue}Are the contents of the following /etc files currently accessible? \n ${Normal} """
                                         for i in ${!dirs[@]};
                                         do
                                                   if [ $test -r ${dirs[$i]} ];
@@ -279,12 +284,13 @@ printf """
                                                   fi
                                         done
                                         echo -en "\n"
+                                        sleep 3s
                                         while true;
                                         do
                                                   c=1
                                                   count="$c."
                                                   printf """
-  ${Blue}Would you like to view contents? ${Normal}\n """
+  ${Blue}Would you like to view contents? (Y/N) ${Normal}\n """
                                                   read -r options
                                                   if [ $options == "Y" ] || [ $options == "y" ];
                                                   then
@@ -302,7 +308,7 @@ printf """
                                                             printf """
   ${Magenta}A. All
   ${Red}Q. Quit${Normal} \n """
-                                                            read -r this
+read -r this
                                                             if [ $this == "1" ];
                                                             then
                                                                     cat ${gooddirs[0]} 2>/dev/null
@@ -338,6 +344,8 @@ printf """
                                                                     break
                                                             elif [ $this == "Q" ] || [ $this == "q" ];
                                                             then
+                                                                    printf """
+  ${Red}QUITTING... ${Normal} \n """
                                                                     break
                                                             else
                                                                     printf """
@@ -355,29 +363,54 @@ printf """
  ${Red}Pleas eneter a valid option ${Normal} \n """
                                           fi
                                   done
+
                               elif [ $files == "2" ];
                               then
-                              #find all text files
-                              find -i -name <file> -type *.txt
-                              break
-          
+                                        if [ find / -perm -4000 -o -perm -2000
+                              
                               elif [ $files == "3" ];
                               then
-                              #find all pdf files
-                              find -i -name <file> -type *.pdf
-                              break
-
+                              #find all text files\
+                              if [ find -i -name <file> -type *.txt 2>/dev/null 1>/dev/null ];
+                              then
+                                        find -i -name <file> -type *.txt 2>/dev/null
+                                        break
+                              else
+                                        printf """
+  ${Blue}No text files were found${Normal} \n """
+                                        break
+          
                               elif [ $files == "4" ];
                               then
+                              #find all pdf files
+                              if [ find -i -name <file> -type *.pdf 2>/dev/null 1>/dev/null ];
+                              then
+                                        find -i -name <file> -type *.pdf 2>/dev/null
+                                        break
+                              else
+                                        printf """
+  ${Blue}No pdf files were found${Normal} \n """
+                                        break
+
+                              elif [ $files == "5" ];
+                              then
                               #find all image files
-                              find -i -name <file> -type *.png
-                              find -i -name <file> -type *.img
-                              break
+                              if [ find -i -name <file> -type *.png 2>/dev/null 1>/dev/null ] | [ find -i -name <file> -type *.jpg 2>/dev/null 1>/dev/null ]  [ find -i -name <file> -type *.gif 2>/dev/null 1>/dev/null ];
+                              then
+                                        find -i -name <file> -type *.png 2>/dev/null
+                                        find -i -name <file> -type *.jpg 2>/dev/null
+                                        find -i -name <file> -type *.gif 2>/dev/null
+                                        break
+                              else
+                                        printf """
+  ${Blue}No image files were found${Normal} \n """
+                                        break
 
                               elif [ $files == "Q" ] | [ $files == "q" ];
                               then
-                                        prinf """
-  ${Red}Quitting... ${Normal} \n """
+                                        printf """
+  ${Red}QUITTING... ${Normal} \n """
+                              sleep 3s
                               break
 
                               else
@@ -387,19 +420,44 @@ printf """
                               fi
                     done
 
-          
+#####################################################
+#                    SELECTION 4
+#                   VIEW CRON JOBS
+#####################################################
+
+          elif [ $selection == "4" ]; 
+          then
+                    
+                    
                          
 #####################################################
 #                    SELECTION 5
-#                    SEE ACCESSES
+#                   FIND PASSWORDS
 #####################################################                  
         #See Accesses
         elif [ $selection == "5" ];
         then
-                  printf """
-  ${Blue}SEE ACCESSES \n\n\n ${Normal}"""
+        
+
+#####################################################
+#                    SELECTION 6
+#                   VIEW NETWORK
+#####################################################                  
+        #See Accesses
+        elif [ $selection == "6" ];
+        then
+                  printf """ 
+  ${Blue}VIEW NETWORK ${Normal} \n """
+                  printf """ 
+  ${Blue}Looking for network interfaces file... ${Normal} \n """
+                  sleep 3s
   
-                  #do this
+                  if [ cat /etc/network/interfaces 2>/dev/null 1>/dev/null ];
+                  then
+                              cat /etc/network/interfaces 2>/dev/null
+                  else
+                            printf """
+  ${Magenta}Could not view network interfaces file ${Normal} \n """
 
         
 #####################################################
