@@ -74,9 +74,8 @@ printf """
   ${Magenta}1. Get System and Security Information
   2. Find Users
   3. See what ${user} can do
-  4. See what root can do
-  5. View contents of /etc
-  6. View cron
+  4. Find Files
+  5. View cron
   ${Red}Q. Quit${Normal}
         
 """
@@ -241,106 +240,154 @@ printf """
                     
 #####################################################
 #                    SELECTION 4
-#              VIEW /ETC FILE CONTENT
+#                     FIND FILES
 #####################################################
 
           elif [ $selection == "4" ];
           then
                     printf """
-  ${Blue}VIEW /ETC CONTENT \n\n\n ${Normal}"""
-  
-                    declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow" "/etc/shells")
-                    declare -a gooddirs=()
-                    c=1
-                    count="$c."
-                    echo -en "Are the contents of the following /etc files currently accessible? \n"
-                    for i in ${!dirs[@]};
-                    do
-                              if [ $test -r ${dirs[$i]} ];
-                              then
-                                        printf """
-  ${dirs[$i]}: ${Green}YES${Normal}  """
-                                        gooddirs+=("${dirs[$i]}")
-                              else
-                                        printf """
-  ${dirs[$i]}: ${Red}NO${Normal}  """
-                              fi
-                    done
-                    echo -en "\n"
+  ${Blue}FIND FILES \n\n\n ${Normal}"""
                     while true;
                     do
-                              c=1
-                              count="$c."
                               printf """
-  ${Blue}Would you like to view contents? ${Normal}\n """
-                              read -r options
-                              if [ $options == "Y" ] || [ $options == "y" ];
+  ${Blue}What files would you like to find? \n
+  ${Magenta}1. /etc files
+  2. All text files
+  3. All pdfs
+  4. All images${Normal}
+                              """
+                              read -r files
+                              
+                              if [ $files == "1" ];
                               then
-                              while true;
-                              do
-                                        printf """
-  ${Blue}Which would you like to display? """
-                                        for p in ${!gooddirs[@]};
+  
+                                        declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow" "/etc/shells")
+                                        declare -a gooddirs=()
+                                        c=1
+                                        count="$c."
+                                        echo -en "Are the contents of the following /etc files currently accessible? \n"
+                                        for i in ${!dirs[@]};
                                         do
-                                                  printf """
-  ${Magenta}$count ${gooddirs[$p]} """
-                                                  c=$((c + 1))
-                                                  count="$c."
+                                                  if [ $test -r ${dirs[$i]} ];
+                                                  then
+                                                            printf """
+  ${dirs[$i]}: ${Green}YES${Normal}  """
+                                                            gooddirs+=("${dirs[$i]}")
+                                                  else
+                                                            printf """
+  ${dirs[$i]}: ${Red}NO${Normal}  """
+                                                  fi
                                         done
-                                        printf """
+                                        echo -en "\n"
+                                        while true;
+                                        do
+                                                  c=1
+                                                  count="$c."
+                                                  printf """
+  ${Blue}Would you like to view contents? ${Normal}\n """
+                                                  read -r options
+                                                  if [ $options == "Y" ] || [ $options == "y" ];
+                                                  then
+                                                  while true;
+                                                  do
+                                                            printf """
+  ${Blue}Which would you like to display? """
+                                                            for p in ${!gooddirs[@]};
+                                                            do
+                                                                      printf """
+  ${Magenta}$count ${gooddirs[$p]} """
+                                                                      c=$((c + 1))
+                                                                      count="$c."
+                                                            done
+                                                            printf """
   ${Magenta}A. All
   ${Red}Q. Quit${Normal} \n """
-                                        read -r this
-                                        if [ $this == "1" ];
-                                        then
-                                                cat ${gooddirs[0]} 2>/dev/null
-                                                break
-                                        elif [ $this == "2" ];
-                                        then
-                                                cat ${gooddirs[1]} 2>/dev/null
-                                                break
-                                        elif [ $this == "3" ];
-                                        then
-                                                cat ${gooddirs[2]} 2>/dev/null
-                                                break
-                                        elif [ $this == "4" ];
-                                        then
-                                                cat ${gooddirs[3]} 2>/dev/null
-                                                break
-                                        elif [ $this == "5" ];
-                                        then
-                                                cat ${gooddirs[4]} 2>/dev/null
-                                                break
-                                        elif [ $this == "6" ];
-                                        then
-                                                cat ${gooddirs[5]} 2>/dev/null
-                                                break
-                                        elif [ $this == "A" ] | [ $this == "a" ];
-                                        then
-                                                echo -en "Displaying all contents now...\n\n\n"
-                                                for a in ${!gooddirs[@]};
-                                                do
-                                                        cat ${gooddirs[$a]}
-                                                        echo -en "\n"
-                                                done
-                                                break
-                                        elif [ $this == "Q" ] || [ $this == "q" ];
-                                        then
-                                                break
-                                        else
-                                                echo "Please enter a valid option"
-                                        fi
-                                done
-                                elif [ $options == "N" ] || [ $options == "n" ];
-                                then
-                                        printf """ 
+                                                            read -r this
+                                                            if [ $this == "1" ];
+                                                            then
+                                                                    cat ${gooddirs[0]} 2>/dev/null
+                                                                    break
+                                                            elif [ $this == "2" ];
+                                                            then
+                                                                    cat ${gooddirs[1]} 2>/dev/null
+                                                                    break
+                                                            elif [ $this == "3" ];
+                                                            then
+                                                                    cat ${gooddirs[2]} 2>/dev/null
+                                                                    break
+                                                            elif [ $this == "4" ];
+                                                            then
+                                                                    cat ${gooddirs[3]} 2>/dev/null
+                                                                    break
+                                                            elif [ $this == "5" ];
+                                                            then
+                                                                    cat ${gooddirs[4]} 2>/dev/null
+                                                                    break
+                                                            elif [ $this == "6" ];
+                                                            then
+                                                                    cat ${gooddirs[5]} 2>/dev/null
+                                                                    break
+                                                            elif [ $this == "A" ] | [ $this == "a" ];
+                                                            then
+                                                                    echo -en "Displaying all contents now...\n\n\n"
+                                                                    for a in ${!gooddirs[@]};
+                                                                    do
+                                                                            cat ${gooddirs[$a]}
+                                                                            echo -en "\n"
+                                                                    done
+                                                                    break
+                                                            elif [ $this == "Q" ] || [ $this == "q" ];
+                                                            then
+                                                                    break
+                                                            else
+                                                                    printf """
+  ${Red}Please enter a valid option \n ${Normal} """
+                                                                    break
+                                                            fi
+                                                    done
+                                          elif [ $options == "N" ] || [ $options == "n" ];
+                                          then
+                                                  printf """ 
   ${Blue}Will not display contents \n ${Normal} """
-                                        break
-                                else
-                                        printf """
+                                                  break
+                                          else
+                                                  printf """
  ${Red}Pleas eneter a valid option ${Normal} \n """
-                                fi
-                        done
+                                          fi
+                                  done
+                              elif [ $files == "2" ];
+                              then
+                              #find all text files
+                              find -i -name <file> -type *.txt
+                              break
+          
+                              elif [ $files == "3" ];
+                              then
+                              #find all pdf files
+                              find -i -name <file> -type *.pdf
+                              break
+
+                              elif [ $files == "4" ];
+                              then
+                              #find all image files
+                              find -i -name <file> -type *.png
+                              find -i -name <file> -type *.img
+                              break
+
+                              elif [ $files == "Q" ] | [ $files == "q" ];
+                              then
+                                        prinf """
+  ${Red}Quitting... ${Normal} \n """
+                              break
+
+                              else
+                              printf """
+  ${Red}Please enter a valid option \n ${Normal} """
+                              break
+                              fi
+                    done
+
+          
                          
 #####################################################
 #                    SELECTION 5
