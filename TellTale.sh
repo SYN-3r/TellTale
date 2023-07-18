@@ -55,7 +55,8 @@ ${LGray}/-----------------------------------------------------------------------
 #####################################################
 #                   MAIN START UP
 #####################################################
-
+#unset history logging
+unset HISTFILE
 #View which user you are
 user=$(whoami)
 printf """
@@ -264,7 +265,7 @@ read -r selection
   
                               if [ $files == "1" ];
                               then
-  
+  ###
                                         declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow" "/etc/shells")
                                         declare -a gooddirs=()
                                         c=1
@@ -360,52 +361,65 @@ read -r this
                                                   break
                                           else
                                                   printf """
- ${Red}Pleas eneter a valid option ${Normal} \n """
+ ${Red}Please enter a valid option ${Normal} \n """
                                           fi
+                                
                                   done
 
+###
                               elif [ $files == "2" ];
                               then
-                                        if [ find / -perm -4000 -o -perm -2000
-                              
+                                        if [ find / -perm -4000 -o -perm -2000 -exec ls - 2>/dev/null 1>/dev/null];
+                                        then
+                                              printf """
+  ${Magenta}Files with the GUID and SUID bits set ${Normal} \n """
+                                              find / -perm -4000 -o -perm -2000 -exec ls - 2>/dev/null
+                                        else
+                                              printf """
+  ${Blue}No files with the GUID or SUID bits set were found ${Normal} \n """
+                                        fi
+                                        break
+  
                               elif [ $files == "3" ];
                               then
                               #find all text files\
-                              if [ find -i -name <file> -type *.txt 2>/dev/null 1>/dev/null ];
-                              then
-                                        find -i -name <file> -type *.txt 2>/dev/null
-                                        break
-                              else
-                                        printf """
+                                        if [ find -i -name <file> -type *.txt 2>/dev/null 1>/dev/null ];
+                                        then
+                                              find -i -name <file> -type *.txt 2>/dev/null
+                                              break
+                                        else
+                                              printf """
   ${Blue}No text files were found${Normal} \n """
-                                        break
+                                        fi
+                                              break
           
                               elif [ $files == "4" ];
                               then
-                              #find all pdf files
-                              if [ find -i -name <file> -type *.pdf 2>/dev/null 1>/dev/null ];
-                              then
-                                        find -i -name <file> -type *.pdf 2>/dev/null
-                                        break
-                              else
-                                        printf """
+                                        #find all pdf files
+                                        if [ find -i -name <file> -type *.pdf 2>/dev/null 1>/dev/null ];
+                                        then
+                                              find -i -name <file> -type *.pdf 2>/dev/null
+                                        else
+                                              printf """
   ${Blue}No pdf files were found${Normal} \n """
+                                        fi
                                         break
 
                               elif [ $files == "5" ];
                               then
                               #find all image files
-                              if [ find -i -name <file> -type *.png 2>/dev/null 1>/dev/null ] | [ find -i -name <file> -type *.jpg 2>/dev/null 1>/dev/null ]  [ find -i -name <file> -type *.gif 2>/dev/null 1>/dev/null ];
-                              then
-                                        find -i -name <file> -type *.png 2>/dev/null
-                                        find -i -name <file> -type *.jpg 2>/dev/null
-                                        find -i -name <file> -type *.gif 2>/dev/null
-                                        break
-                              else
+                                        if [ find -i -name <file> -type *.png 2>/dev/null 1>/dev/null ] | [ find -i -name <file> -type *.jpg 2>/dev/null 1>/dev/null ]  [ find -i -name <file> -type *.gif 2>/dev/null 1>/dev/null ];
+                                        then
+                                                find -i -name <file> -type *.png 2>/dev/null
+                                                find -i -name <file> -type *.jpg 2>/dev/null
+                                                find -i -name <file> -type *.gif 2>/dev/null
+                                        else
                                         printf """
   ${Blue}No image files were found${Normal} \n """
+                                        fi
                                         break
 
+                                        
                               elif [ $files == "Q" ] | [ $files == "q" ];
                               then
                                         printf """
@@ -427,9 +441,22 @@ read -r this
 
           elif [ $selection == "4" ]; 
           then
+                  if [ crontab -l 1>/dev/null 2>/dev/null ];
+                      then
+                            printf """
+  ${Magenta}Cron jobs for current user: ${Normal} \n"""
+                            crontab -l
+                      else
+                            printf """
+  ${Blue}No cron jobs were found """
+                  fi
+
+                  cat /etc/crontab
+                  ls /etc/cron.*
+                      
                     
                     
-                         
+                   
 #####################################################
 #                    SELECTION 5
 #                   FIND PASSWORDS
@@ -447,7 +474,18 @@ read -r this
         elif [ $selection == "6" ];
         then
                   printf """ 
-  ${Blue}VIEW NETWORK ${Normal} \n """
+  ${Blue}VIEW NETWORK 
+  Listening ports: ${Normal} 
+                  """
+                  if [ netstat -nap 2>/dev/null 1>/dev/null ];
+                  then
+                              netstat -nap 2>/dev/null
+                  else
+                            printf """
+  ${Magenta}Could not view listening ports ${Normal} \n """
+                  fi
+                  
+                  
                   printf """ 
   ${Blue}Looking for network interfaces file... ${Normal} \n """
                   sleep 3s
@@ -458,7 +496,7 @@ read -r this
                   else
                             printf """
   ${Magenta}Could not view network interfaces file ${Normal} \n """
-
+                  fi
         
 #####################################################
 #                    SELECTION Q
