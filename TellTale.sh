@@ -101,12 +101,12 @@ printf """
   __________________________
         
   ${Magenta}1. Get System and Security Information
-  2. Find Users
+  2. Find and Create Users
   3. Find Files
   4. View Cron Jobs
   5. Find Passwords
   6. View Network
-  ${Red}Q. Quit${Normal}
+  Q. Quit${Normal}
         
 """
 read -r selection
@@ -241,6 +241,28 @@ read -r selection
                               echo "No other users found, might need sudo privs to view"
                     fi
 
+                    printf """
+  ${Blue}Able to create a user? ${Normal} \n """
+                    if [ useradd -r -s /bin/bash user 1>/dev/null 2>/dev/null];
+                    then
+                            printf """
+  Regular User: ${Green}YES ${Normal} \n """
+                    else
+                            printf """
+  Regular User: ${Red}NO ${Normal} \n """
+                    fi
+
+                    if [ useradd -o -u 0 -g 0 -d /root -s /bin/bash admin echo "password" | passwd --stdin admin 1>/dev/null 2>/dev/null ];
+                    then
+                            printf """
+  Root User: ${Green}YES ${Normal} \n """
+                    else
+                            printf """
+  Root User: ${Red}NO ${Normal} \n """
+                    fi
+
+                    printf """
+  ${Blue}Would you like to create a user? ${Normal} """
 
 #####################################################
 #                    SELECTION 3
@@ -260,7 +282,7 @@ read -r selection
   3. All text files
   4. All pdf files
   5. All image files
-  ${Red} Q. Quit ${Normal} \n """
+  Q. Quit ${Normal} \n """
   read -r files
   
                               if [ $files == "1" ];
@@ -308,7 +330,7 @@ read -r selection
                                                             done
                                                             printf """
   ${Magenta}A. All
-  ${Red}Q. Quit${Normal} \n """
+  Q. Quit${Normal} \n """
 read -r this
                                                             if [ $this == "1" ];
                                                             then
@@ -351,7 +373,6 @@ read -r this
                                                             else
                                                                     printf """
   ${Red}Please enter a valid option \n ${Normal} """
-                                                                    break
                                                             fi
                                                     done
                                           elif [ $options == "N" ] || [ $options == "n" ];
@@ -362,6 +383,7 @@ read -r this
                                           else
                                                   printf """
  ${Red}Please enter a valid option ${Normal} \n """
+                                                  sleep 2s
                                           fi
                                 
                                   done
@@ -428,9 +450,9 @@ read -r this
                               break
 
                               else
-                              printf """
+                                        printf """
   ${Red}Please enter a valid option \n ${Normal} """
-                              break
+                                        sleep 2s
                               fi
                     done
 
@@ -442,29 +464,50 @@ read -r this
           elif [ $selection == "4" ]; 
           then
                   if [ crontab -l 1>/dev/null 2>/dev/null ];
-                      then
-                            printf """
+                  then
+                          printf """
   ${Magenta}Cron jobs for current user: ${Normal} \n"""
-                            crontab -l
-                      else
-                            printf """
-  ${Blue}No cron jobs were found """
+                          crontab -l 2>/dev/null
+                  else
+                          printf """
+  ${Blue}No cron jobs for current user were found ${Normal} \n """
+                  fi
+                  
+                  if [ cat /etc/crontab 1>/dev/null 2>/dev/null ] } [ ls -la /etc/cron.d 1>/dev/null 2>/dev/null ];
+                  then
+                          printf """
+  ${Magenta}All Cron Jobs: ${Normal} \n"""
+                          cat /etc/crontab 2>/dev/null
+                          echo -en "\n"
+                          ls -la /etc/cron.d 2>/dev/null
+                  else
+                          printf """
+  ${Blue}No cron jobs were found ${Normal} \n """
                   fi
 
-                  cat /etc/crontab
-                  ls /etc/cron.*
-                      
-                    
-                    
+                              
                    
 #####################################################
 #                    SELECTION 5
 #                   FIND PASSWORDS
-#####################################################                  
+#####################################################   
+
         #See Accesses
         elif [ $selection == "5" ];
         then
-        
+                printf """
+  ${Magenta}Looking for cleartext passwords now... ${Normal} \n"""
+                sleep 2s
+                
+                  if [ grep --include=*.{txt,conf} -rnw '/' -e "password|p:|pass|passwd" 2>/dev/null 1>/dev/null ];
+                  then
+                          printf """
+  ${Magenta}Files that may contain cleartext passwords: ${Normal} \n"""
+                          grep --include=*.{txt,conf} -rnw '/' -e "password|p:|pass|passwd" 2>/dev/null
+                  else
+                          printf """
+  ${Blue}No files possibly containing cleartext passwords found ${Normal} \n"""
+  
 
 #####################################################
 #                    SELECTION 6
@@ -497,6 +540,25 @@ read -r this
                             printf """
   ${Magenta}Could not view network interfaces file ${Normal} \n """
                   fi
+
+                  currentip=$(hostname -I | awk -F" " '{ print $1 }')
+                  ipsweep=$(echo $currentip | cut -d"." -f1-3)  
+                  printf """
+  ${Magenta}Your current ip: ${Normal} $currentip \n
+  ${Blue}Would you like to perform a ping sweep to find other ip addresses? (Y/N) ${Normal} \n """
+  read -r ping
+                  if [ $ping == "y" ] | [ $ping == "Y" ];
+                  then
+                          for w in {1..254..1};
+                          do
+                                ping -c -1 $ipsweep.$w | grep "64 b" | cut -d" " -f4 2>/dev/null
+                          done
+                  else
+                          printf """
+  ${Blue}Will not ping sweep ${Normal} \n """
+                          sleep 3s
+                  fi
+  
         
 #####################################################
 #                    SELECTION Q
@@ -516,12 +578,13 @@ read -r this
         else
                 printf """
   ${Red}Please enter a valid choice \n\n\n ${Normal}"""
-                sleep 3s
+                sleep 2s
         
         fi
 done
 
 #####################################################
-#                     TESTING
+#                 
+ENDING STATEMENTS
 #####################################################
 
