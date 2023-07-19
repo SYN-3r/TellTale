@@ -287,7 +287,6 @@ read -r selection
   
                               if [ $files == "1" ];
                               then
-  ###
                                         declare -a dirs=("/etc/group" "/etc/passwd" "/etc/hosts" "/etc/shadow" "/etc/shells")
                                         declare -a gooddirs=()
                                         c=1
@@ -388,7 +387,6 @@ read -r this
                                 
                                   done
 
-###
                               elif [ $files == "2" ];
                               then
                                         if [ find / -perm -4000 -o -perm -2000 -exec ls - 2>/dev/null 1>/dev/null];
@@ -584,7 +582,6 @@ read -r this
 done
 
 #####################################################
-#                 
-ENDING STATEMENTS
+#                 ENDING STATEMENTS
 #####################################################
 
