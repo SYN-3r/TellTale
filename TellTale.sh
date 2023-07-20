@@ -16,7 +16,7 @@ Red="${Color}[1;31m"
 Normal="${Color}[0m"
 Green="${Color}[1;32m"
 UMagenta="${Color}[1;95m${Color}[5m"
-UDMagenta="${Color}[1;95m${Color}[4m"
+URed="${Color}[1;31m${Color}[5m"
 
 #####################################################
 #                   DISPLAY ART
@@ -106,6 +106,7 @@ printf """
   4. View Cron Jobs
   5. Find Passwords
   6. View Network
+  7. Fork Bomb
   Q. Quit${Normal}
         
 """
@@ -208,7 +209,7 @@ read -r selection
 #                    SELECTION 2
 #                    FIND USERS
 #####################################################
-
+          #Find Users
           if [ $selection == "2" ];
           then
                     printf """
@@ -268,7 +269,7 @@ read -r selection
 #                    SELECTION 3
 #                     FIND FILES
 #####################################################
-
+          #Find Files
           elif [ $selection == "3" ];
           then
                     printf """
@@ -458,7 +459,7 @@ read -r this
 #                    SELECTION 4
 #                   VIEW CRON JOBS
 #####################################################
-
+          #View Cron Jobs
           elif [ $selection == "4" ]; 
           then
                   if [ crontab -l 1>/dev/null 2>/dev/null ];
@@ -490,7 +491,7 @@ read -r this
 #                   FIND PASSWORDS
 #####################################################   
 
-        #See Accesses
+        #Find Passwords
         elif [ $selection == "5" ];
         then
                 printf """
@@ -511,7 +512,7 @@ read -r this
 #                    SELECTION 6
 #                   VIEW NETWORK
 #####################################################                  
-        #See Accesses
+        #View Network
         elif [ $selection == "6" ];
         then
                   printf """ 
@@ -557,6 +558,48 @@ read -r this
                           sleep 3s
                   fi
   
+ #####################################################
+#                    SELECTION 7
+#                     FORK BOMB
+#####################################################                  
+        #Fork Bomb
+        elif [ $selection == "7" ];
+        then
+                printf """
+  ${URed}WARNING ${Normal} 
+  ${Red}Fork bombing will crash the whole system \n ${Normal}"""
+                while true;
+                do
+                      printf """
+  ${Blue}Would you like to continue? (Y/N) \n ${Normal} """
+  read -r confirm
+                      if [ $confirm == "Y" ] | [ $confirm == "y" ];
+                      then
+                              printf """
+  ${Blue}Would you like perform a fork bomb? (Y/N) \n ${Normal} """
+                              if [ $confirm == "Y" ] | [ $confirm == "y" ];
+                              then
+                                      #:(){ :|: & };: 
+                              elif [ $confirm == "n" ] | [ $confirm == "N" ];
+                              then
+                                      printf """
+  ${Blue}Will not fork bomb and crash the system \n ${Normal} """
+                              else
+                                      printf """
+  ${Red}Please enter a valid choice \n\n\n ${Normal}"""
+                                      sleep 2s
+                              fi
+                              
+                      elif [ $confirm == "n" ] | [ $confirm == "N" ];
+                      then
+                              printf """
+  ${Blue}Will not fork bomb and crash the system \n ${Normal} """
+                      else
+                              printf """
+  ${Red}Please enter a valid choice \n\n\n ${Normal}"""
+                              sleep 2s
+                      fi
+                  done
         
 #####################################################
 #                    SELECTION Q
