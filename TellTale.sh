@@ -627,4 +627,6 @@ done
 #####################################################
 #                 ENDING STATEMENTS
 #####################################################
+printf """
 
+${Magenta}♥ Thank you for using the TellTale Script by SYN-3r! ♥ ${Normal} """
