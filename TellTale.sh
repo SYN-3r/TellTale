@@ -453,6 +453,7 @@ then
 else
         printf """
   ${Blue}No files possibly containing cleartext passwords found ${Normal} \n"""
+fi
 }
 
 Network() { 
