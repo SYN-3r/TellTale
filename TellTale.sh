@@ -569,7 +569,7 @@ do
                   SysSecure
                     
           #Find Users
-          if [ $selection == "2" ];
+          elif [ $selection == "2" ];
           then
                   FindUser
 
