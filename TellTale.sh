@@ -440,7 +440,7 @@ if [ crontab -l 1>/dev/null 2>/dev/null ];
 
 }
 
-Password() {
+Passwords() {
 printf """
   ${Magenta}Looking for cleartext passwords now... ${Normal} \n"""
                 sleep 2s
@@ -541,7 +541,7 @@ printf """
 ${Magenta}♥ Thank you for using the TellTale Script by SYN-3r! ♥ ${Normal} """
 }
 
-Menu() {
+MenuSelect() {
 #MENU display start
 while true; 
 do
@@ -585,7 +585,7 @@ read -r selection
           #Find Passwords
           elif [ $selection == "5" ];
           then
-                  Password   
+                  Passwords   
            
           #View Network
           elif [ $selection == "6" ];
@@ -612,7 +612,7 @@ done
 TellTale() {
 Art
 Startup
-Menu
+MenuSelect
 End
 }
 
