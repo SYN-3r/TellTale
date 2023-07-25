@@ -440,18 +440,18 @@ if [ crontab -l 1>/dev/null 2>/dev/null ];
 
 }
 
-Passwords() {
+Password() {
 printf """
   ${Magenta}Looking for cleartext passwords now... ${Normal} \n"""
-                sleep 2s
+sleep 2s
                 
-                  if [ grep --include=*.{txt,conf} -rnw '/' -e "password|p:|pass|passwd" 2>/dev/null 1>/dev/null ];
-                  then
-                          printf """
+if [ grep --include=*.{txt,conf} -rnw '/' -e "password|p:|pass|passwd" 2>/dev/null 1>/dev/null ];
+then
+        printf """
   ${Magenta}Files that may contain cleartext passwords: ${Normal} \n"""
-                          grep --include=*.{txt,conf} -rnw '/' -e "password|p:|pass|passwd" 2>/dev/null
-                  else
-                          printf """
+        grep --include=*.{txt,conf} -rnw '/' -e "password|p:|pass|passwd" 2>/dev/null
+else
+        printf """
   ${Blue}No files possibly containing cleartext passwords found ${Normal} \n"""
 }
 
@@ -545,7 +545,7 @@ MenuSelect() {
 #MENU display start
 while true; 
 do
-printf """
+        printf """
           ${Blue}MAIN MENU
   What would you like to do?
   __________________________
@@ -560,7 +560,7 @@ printf """
   Q. Quit${Normal}
         
 """
-read -r selection
+  read -r selection
 
           #View System and Security information
           if [ $selection == "1" ];
@@ -585,7 +585,7 @@ read -r selection
           #Find Passwords
           elif [ $selection == "5" ];
           then
-                  Passwords   
+                  Password  
            
           #View Network
           elif [ $selection == "6" ];
@@ -598,15 +598,14 @@ read -r selection
                   Fork
                   
           elif [ $selection == "Q" ] || [ $selection == "q" ];
-        then
+          then
                   Quit
                   
           else
                   CatchAll
         
-        fi
-done
-        
+          fi
+done       
 }
 
 TellTale() {
