@@ -4,6 +4,7 @@
 
 #FUNCTIONS
 
+#display art for the menu
 Art() {
 Color=$(printf '\033')
 Magenta="${Color}[1;95m"
@@ -48,6 +49,7 @@ ${LGray}/-----------------------------------------------------------------------
 """
 }
 
+#runs the basic commands when you first log on to the target machine
 StartUp() {
 #unset history logging
 unset HISTFILE
@@ -83,6 +85,7 @@ ${Magenta}Not able to view which sudo commands can be run ${Normal}\n"
 fi
 }
 
+#leaves the menu system when selected
 Quit() {
 printf """
   ${Red}QUITTING... ${Normal} \n """
@@ -90,6 +93,7 @@ sleep 3s
 break
 }
 
+#catchall statement for the menu if an invalid option is selected
 CatchAll() {
 printf """
   ${Red}Please enter a valid choice \n\n\n ${Normal}"""
@@ -182,6 +186,7 @@ printf """
                     fi
 }
 
+#Find sudo users amd regular users, shows if creating users is allowed
 FindUser() {
 printf """
   ${Blue}FIND USERS \n\n\n ${Normal}"""
@@ -234,6 +239,7 @@ printf """
                     fi
 }
 
+#presents another menu to parse through files and view contents if possible
 FindFiles() {
 printf """
   ${Blue}FIND FILES \n\n\n ${Normal}"""
@@ -415,6 +421,7 @@ read -r this
 
 }
 
+#Views crontab and scheduled jobs
 CronJob() {
 if [ crontab -l 1>/dev/null 2>/dev/null ];
                   then
@@ -440,6 +447,7 @@ if [ crontab -l 1>/dev/null 2>/dev/null ];
 
 }
 
+#Looks for any plaintext passwords located on the target machine
 Password() {
 printf """
   ${Magenta}Looking for cleartext passwords now... ${Normal} \n"""
@@ -456,6 +464,7 @@ else
 fi
 }
 
+#Views the network of the target machine
 Network() { 
 printf """ 
   ${Blue}VIEW NETWORK 
@@ -502,6 +511,7 @@ printf """
   
 }
 
+#Gives option to fork bomb the target machine
 Fork() {
 printf """
   ${URed}WARNING ${Normal} 
@@ -536,12 +546,14 @@ printf """
                   done
 }
 
+#Ending Statements
 End() {
 printf """
 
 ${Magenta}♥ Thank you for using the TellTale Script by SYN-3r! ♥ ${Normal} """
 }
 
+#The main menu to naviate TellTale options
 MenuSelect() {
 #MENU display start
 while true; 
@@ -609,6 +621,7 @@ do
 done       
 }
 
+#Calls all of the functions in order
 TellTale() {
 Art
 Startup
