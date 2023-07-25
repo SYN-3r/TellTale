@@ -1,11 +1,10 @@
 #!/bin/sh
 
-#TellTale Linux Enumeration Script
+#TellTale by SYN-3r
 
-#####################################################
-#                     COLORS
-#####################################################
+#FUNCTIONS
 
+Art() {
 Color=$(printf '\033')
 Magenta="${Color}[1;95m"
 LGray="${Color}[1;37m"
@@ -17,10 +16,6 @@ Normal="${Color}[0m"
 Green="${Color}[1;32m"
 UMagenta="${Color}[1;95m${Color}[5m"
 URed="${Color}[1;31m${Color}[5m"
-
-#####################################################
-#                   DISPLAY ART
-#####################################################
 
 printf """
 ${LGray}/-------------------------------------------------------------------------\\
@@ -51,10 +46,9 @@ ${LGray}/-----------------------------------------------------------------------
 \-------------------------------------------------------------------------/${Normal}
 
 """
+}
 
-#####################################################
-#                   MAIN START UP
-#####################################################
+StartUp() {
 #unset history logging
 unset HISTFILE
 #View which user you are
@@ -87,39 +81,23 @@ else
 ${Magenta}Not able to view which sudo commands can be run ${Normal}\n"
 
 fi
+}
 
-#####################################################
-#                       MENU
-#####################################################
-
-#MENU display start
-while true; 
-do
+Quit() {
 printf """
-          ${Blue}MAIN MENU
-  What would you like to do?
-  __________________________
-        
-  ${Magenta}1. Get System and Security Information
-  2. Find and Create Users
-  3. Find Files
-  4. View Cron Jobs
-  5. Find Passwords
-  6. View Network
-  7. Fork Bomb
-  Q. Quit${Normal}
-        
-"""
-read -r selection
-          
-#####################################################
-#                    SELECTION 1
-#         GET SYSTEM AN SECURITY INFORMATION
-#####################################################
+  ${Red}QUITTING... ${Normal} \n """
+sleep 3s
+break
+}
 
-          if [ $selection == "1" ];
-          then
-                    printf """
+CatchAll() {
+printf """
+  ${Red}Please enter a valid choice \n\n\n ${Normal}"""
+sleep 2s
+}
+
+SysSecure() {
+printf """
   ${Blue}SYSTEM AND SECURITY INFORMATION \n\n\n${Normal}"""
   
                     #View what users are on the machine
@@ -202,17 +180,10 @@ read -r selection
                               printf """
   AppArmor: ${Red}NO${Normal} """
                     fi
+}
 
-                    
-
-#####################################################
-#                    SELECTION 2
-#                    FIND USERS
-#####################################################
-          #Find Users
-          if [ $selection == "2" ];
-          then
-                    printf """
+FindUser() {
+printf """
   ${Blue}FIND USERS \n\n\n ${Normal}"""
   
                     #check to see if root already
@@ -261,18 +232,10 @@ read -r selection
                             printf """
   Root User: ${Red}NO ${Normal} \n """
                     fi
+}
 
-                    printf """
-  ${Blue}Would you like to create a user? ${Normal} """
-
-#####################################################
-#                    SELECTION 3
-#                     FIND FILES
-#####################################################
-          #Find Files
-          elif [ $selection == "3" ];
-          then
-                    printf """
+FindFiles() {
+printf """
   ${Blue}FIND FILES \n\n\n ${Normal}"""
                     while true;
                     do 
@@ -367,9 +330,7 @@ read -r this
                                                                     break
                                                             elif [ $this == "Q" ] || [ $this == "q" ];
                                                             then
-                                                                    printf """
-  ${Red}QUITTING... ${Normal} \n """
-                                                                    break
+                                                                    Quit
                                                             else
                                                                     printf """
   ${Red}Please enter a valid option \n ${Normal} """
@@ -443,10 +404,7 @@ read -r this
                                         
                               elif [ $files == "Q" ] | [ $files == "q" ];
                               then
-                                        printf """
-  ${Red}QUITTING... ${Normal} \n """
-                              sleep 3s
-                              break
+                                        Quit
 
                               else
                                         printf """
@@ -455,14 +413,10 @@ read -r this
                               fi
                     done
 
-#####################################################
-#                    SELECTION 4
-#                   VIEW CRON JOBS
-#####################################################
-          #View Cron Jobs
-          elif [ $selection == "4" ]; 
-          then
-                  if [ crontab -l 1>/dev/null 2>/dev/null ];
+}
+
+CronJob() {
+if [ crontab -l 1>/dev/null 2>/dev/null ];
                   then
                           printf """
   ${Magenta}Cron jobs for current user: ${Normal} \n"""
@@ -484,17 +438,10 @@ read -r this
   ${Blue}No cron jobs were found ${Normal} \n """
                   fi
 
-                              
-                   
-#####################################################
-#                    SELECTION 5
-#                   FIND PASSWORDS
-#####################################################   
+}
 
-        #Find Passwords
-        elif [ $selection == "5" ];
-        then
-                printf """
+Password() {
+printf """
   ${Magenta}Looking for cleartext passwords now... ${Normal} \n"""
                 sleep 2s
                 
@@ -506,16 +453,10 @@ read -r this
                   else
                           printf """
   ${Blue}No files possibly containing cleartext passwords found ${Normal} \n"""
-  
+}
 
-#####################################################
-#                    SELECTION 6
-#                   VIEW NETWORK
-#####################################################                  
-        #View Network
-        elif [ $selection == "6" ];
-        then
-                  printf """ 
+Network() { 
+printf """ 
   ${Blue}VIEW NETWORK 
   Listening ports: ${Normal} 
                   """
@@ -558,14 +499,10 @@ read -r this
                           sleep 3s
                   fi
   
- #####################################################
-#                    SELECTION 7
-#                     FORK BOMB
-#####################################################                  
-        #Fork Bomb
-        elif [ $selection == "7" ];
-        then
-                printf """
+}
+
+Fork() {
+printf """
   ${URed}WARNING ${Normal} 
   ${Red}Fork bombing will crash the whole system \n ${Normal}"""
                 while true;
@@ -585,9 +522,7 @@ read -r this
                                       printf """
   ${Blue}Will not fork bomb and crash the system \n ${Normal} """
                               else
-                                      printf """
-  ${Red}Please enter a valid choice \n\n\n ${Normal}"""
-                                      sleep 2s
+                                      CatchAll
                               fi
                               
                       elif [ $confirm == "n" ] | [ $confirm == "N" ];
@@ -595,38 +530,93 @@ read -r this
                               printf """
   ${Blue}Will not fork bomb and crash the system \n ${Normal} """
                       else
-                              printf """
-  ${Red}Please enter a valid choice \n\n\n ${Normal}"""
-                              sleep 2s
+                              CatchAll
                       fi
                   done
-        
-#####################################################
-#                    SELECTION Q
-#                        QUIT
-#####################################################
-  
-        elif [ $selection == "Q" ] || [ $selection == "q" ];
-        then
-                  printf """
-  ${Red}QUITTING... \n\n\n ${Normal}"""
-                  sleep 3s
-                  break
+}
 
-#####################################################
-#               CATCH ALL FOR SELECTION
-##################################################### 
-        else
-                printf """
-  ${Red}Please enter a valid choice \n\n\n ${Normal}"""
-                sleep 2s
-        
-        fi
-done
-
-#####################################################
-#                 ENDING STATEMENTS
-#####################################################
+End() {
 printf """
 
 ${Magenta}♥ Thank you for using the TellTale Script by SYN-3r! ♥ ${Normal} """
+}
+
+Menu() {
+#MENU display start
+while true; 
+do
+printf """
+          ${Blue}MAIN MENU
+  What would you like to do?
+  __________________________
+        
+  ${Magenta}1. Get System and Security Information
+  2. Find Users
+  3. Find Files
+  4. View Cron Jobs
+  5. Find Passwords
+  6. View Network
+  7. Fork Bomb
+  Q. Quit${Normal}
+        
+"""
+read -r selection
+
+          #View System and Security information
+          if [ $selection == "1" ];
+          then
+                  SysSecure
+                    
+          #Find Users
+          if [ $selection == "2" ];
+          then
+                  FindUser
+
+          #Find Files
+          elif [ $selection == "3" ];
+          then
+                  FindFiles
+
+          #View Cron Jobs
+          elif [ $selection == "4" ]; 
+          then
+                  CronJob  
+
+          #Find Passwords
+          elif [ $selection == "5" ];
+          then
+                  Password   
+           
+          #View Network
+          elif [ $selection == "6" ];
+          then
+                  Network
+                                 
+          #Fork Bomb
+          elif [ $selection == "7" ];
+          then
+                  Fork
+                  
+          elif [ $selection == "Q" ] || [ $selection == "q" ];
+        then
+                  Quit
+                  
+          else
+                  CatchAll
+        
+        fi
+done
+        
+}
+
+TellTale() {
+Art
+Startup
+Menu
+End
+}
+
+#FUNCTION CALL
+
+TellTale
+
