@@ -628,10 +628,3 @@ Startup
 MenuSelect
 End
 }
-
-#FUNCTION CALL
-
-TellTale
-
-#df -h
-
