@@ -11,5 +11,7 @@ Menus embedded within menus make the ennumeration process easy to execute.
   
 ![Screenshot](Thank_you.png)  
 Thank you for using my script!
- 
+<br> <br>
+Like this Script? Check out [`WayStar`](https://github.com/SYN-3r/WayStar/tree/main) by SYN-3r for Windows Enummeration
+<br><br>
 <sub><sup> WARNING: TellTale and other scripts by SYN-3r should only be used for educational purposes or for authorized pentesters. The author is not responisible for any misuse.</sup></sub>
