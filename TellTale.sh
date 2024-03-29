@@ -511,41 +511,6 @@ printf """
   
 }
 
-#Gives option to fork bomb the target machine
-Fork() {
-printf """
-  ${URed}WARNING ${Normal} 
-  ${Red}Fork bombing will crash the whole system \n ${Normal}"""
-                while true;
-                do
-                      printf """
-  ${Blue}Would you like to continue? (Y/N) \n ${Normal} """
-  read -r confirm
-                      if [ $confirm == "Y" ] | [ $confirm == "y" ];
-                      then
-                              printf """
-  ${Blue}Would you like perform a fork bomb? (Y/N) \n ${Normal} """
-                              if [ $confirm == "Y" ] | [ $confirm == "y" ];
-                              then
-                                      #:(){ :|: & };: 
-                              elif [ $confirm == "n" ] | [ $confirm == "N" ];
-                              then
-                                      printf """
-  ${Blue}Will not fork bomb and crash the system \n ${Normal} """
-                              else
-                                      CatchAll
-                              fi
-                              
-                      elif [ $confirm == "n" ] | [ $confirm == "N" ];
-                      then
-                              printf """
-  ${Blue}Will not fork bomb and crash the system \n ${Normal} """
-                      else
-                              CatchAll
-                      fi
-                  done
-}
-
 #Ending Statements
 End() {
 printf """
@@ -569,7 +534,6 @@ do
   4. View Cron Jobs
   5. Find Passwords
   6. View Network
-  7. Fork Bomb
   Q. Quit${Normal}
         
 """
@@ -605,10 +569,6 @@ do
           then
                   Network
                                  
-          #Fork Bomb
-          elif [ $selection == "7" ];
-          then
-                  Fork
                   
           elif [ $selection == "Q" ] || [ $selection == "q" ];
           then
