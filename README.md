@@ -2,7 +2,6 @@
 ![Screenshot](Ascii_art.png)  
 TellTale is a Linux enummeration script contructed with a menu system for an easy to use, visually aesthetic experience.  
   
-![Screenshot](Main_menu.png)  
 The menu layout in this script allows users to easily navigate between different segments of the script without having to run everything at once.
 Users may back out of the script at any point using the "Q" selection to quit.
   
